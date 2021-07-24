@@ -13,13 +13,19 @@ export default class Bar extends Vue {
 
   private cursorDown: boolean = false
 
+  readonly $refs!: {
+    thumb: Element
+    [key: string]: Vue | Element | undefined
+  }
+
+  readonly $parent!: Scrollbar
+
   get bar(): IDirection {
     return BAR_MAP[this.vertical ? 'vertical' : 'horizontal']
   }
 
   get wrap(): Element {
-    const parent = this.$parent as Scrollbar
-    return parent.wrap
+    return this.$parent.wrap
   }
 
   private mouseMoveDocumentHandler(e: MouseEvent): void {

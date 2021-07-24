@@ -1,6 +1,7 @@
 import { CreateElement } from 'vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Bar from './bar'
+import ResizeEvent from './resizeEvent'
 import scrollbarWidth from './scrollbar-width'
 import { toObject } from './utils'
 
@@ -27,9 +28,16 @@ export default class Scrollbar extends Vue {
   private sizeHeight: number | string = '0'
   private moveX = 0
   private moveY = 0
+  private resizeOb = new ResizeEvent()
+
+  readonly $refs!: {
+    wrap: Element
+    resize: Element
+    [key: string]: Vue | Element | undefined
+  }
 
   get wrap(): Element {
-    return this.$refs.wrap as Element
+    return this.$refs.wrap
   }
 
   private handleScroll(): void {
@@ -95,13 +103,11 @@ export default class Scrollbar extends Vue {
       </div>
     )
 
-    const { moveX, moveY } = this
-
     let nodes = !this.native
       ? [
           wrap,
-          <bar move={moveX} size={this.sizeWidth} />,
-          <bar move={moveY} size={this.sizeHeight} vertical />,
+          <bar move={this.moveX} size={this.sizeWidth} />,
+          <bar move={this.moveY} size={this.sizeHeight} vertical />,
         ]
       : [
           <div ref='wrap' class={[this.wrapClass, 'el-scrollbar__wrap']} style={style}>
@@ -114,9 +120,10 @@ export default class Scrollbar extends Vue {
   private mounted(): void {
     if (this.native) return
     this.$nextTick(this.update)
-    // !this.noresize &&
+    !this.noresize && this.resizeOb.addResizeListener(this.$refs.resize, this.update)
   }
   private beforeDestroy(): void {
     if (this.native) return
+    !this.noresize && this.resizeOb.removeResizeListener(this.$refs.resize, this.update)
   }
 }
