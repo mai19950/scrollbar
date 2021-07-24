@@ -1,9 +1,9 @@
 import { CreateElement } from 'vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Bar from './bar'
-import ResizeEvent from './resizeEvent'
+import ResizeEvent from '../share/resizeEvent'
 import scrollbarWidth from './scrollbar-width'
-import { toObject } from './utils'
+import { toObject } from '../share/utils'
 
 interface StyleObj {
   [key: string]: any
@@ -35,6 +35,8 @@ export default class Scrollbar extends Vue {
     resize: Element
     [key: string]: Vue | Element | undefined
   }
+
+  static install: (...args: any[]) => void
 
   get wrap(): Element {
     return this.$refs.wrap

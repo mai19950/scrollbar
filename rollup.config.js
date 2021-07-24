@@ -4,22 +4,26 @@ import commonjs from '@rollup/plugin-commonjs'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 
 export default {
-  input: './src/index.js',
+  input: './src/index.ts',
   output: {
     file: './bundle/scrollbar.js',
     format: 'umd',
     name: 'scrollbar',
-    sourcemap: true
+    sourcemap: true,
   },
 
   plugins: [
-    nodeResolve(),
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false,
+      extensions: ['.js', '.ts', '.jsx', '.tsx', '.vue', '.json'],
+    }),
     commonjs(),
     typescript(),
     babel({
-      exclude: 'node_modules/**'
-    })
+      exclude: 'node_modules/**',
+    }),
   ],
 
-  external: ['vue']
+  external: ['vue', 'vue-property-decorator', 'vue-class-component', 'vue-tsx-support'],
 }

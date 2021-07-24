@@ -1,7 +1,7 @@
 import { CreateElement } from 'vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Scrollbar from './main'
-import { IDirection, BAR_MAP, renderThumbStyle } from './utils'
+import { IDirection, BAR_MAP, renderThumbStyle } from '../share/utils'
 
 @Component({
   name: 'bar',
