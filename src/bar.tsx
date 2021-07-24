@@ -7,7 +7,7 @@ import { IDirection, BAR_MAP, renderThumbStyle } from './utils'
   name: 'bar',
 })
 export default class Bar extends Vue {
-  @Prop({ default: true }) private vertical!: boolean
+  @Prop({}) private vertical!: boolean
   @Prop({}) private size!: string
   @Prop({}) private move!: number
 

@@ -1,5 +1,6 @@
 import { CreateElement } from 'vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import Bar from './bar'
 import scrollbarWidth from './scrollbar-width'
 import { toObject } from './utils'
 
@@ -11,6 +12,7 @@ type StyleType = string | StyleObj | StyleObj[]
 
 @Component({
   name: 'Scrollbar',
+  components: { Bar },
 })
 export default class Scrollbar extends Vue {
   @Prop({}) private native!: boolean
@@ -30,11 +32,24 @@ export default class Scrollbar extends Vue {
     return this.$refs.wrap as Element
   }
 
-  private handleScroll() {
+  private handleScroll(): void {
     const wrap = this.wrap
 
     this.moveX = (wrap.scrollLeft * 100) / wrap.clientWidth
     this.moveY = (wrap.scrollTop * 100) / wrap.clientHeight
+  }
+
+  private update(): void {
+    let heightPercentage: number, widthPercentage: number
+    const wrap = this.wrap
+    if (!wrap) return
+    const { clientHeight, clientWidth, scrollHeight, scrollWidth } = wrap
+
+    heightPercentage = (clientHeight * 100) / scrollHeight
+    widthPercentage = (clientWidth * 100) / scrollWidth
+
+    this.sizeHeight = heightPercentage < 100 ? `${heightPercentage}%` : ''
+    this.sizeWidth = widthPercentage < 100 ? `${widthPercentage}%` : ''
   }
 
   private render(h: CreateElement) {
@@ -76,8 +91,32 @@ export default class Scrollbar extends Vue {
           gutter ? '' : 'el-scrollbar__wrap--hidden-default',
         ]}
       >
-        {view}
+        {[view]}
       </div>
     )
+
+    const { moveX, moveY } = this
+
+    let nodes = !this.native
+      ? [
+          wrap,
+          <bar move={moveX} size={this.sizeWidth} />,
+          <bar move={moveY} size={this.sizeHeight} vertical />,
+        ]
+      : [
+          <div ref='wrap' class={[this.wrapClass, 'el-scrollbar__wrap']} style={style}>
+            {[view]}
+          </div>,
+        ]
+    return h('div', { class: 'el-scrollbar' }, nodes)
+  }
+
+  private mounted(): void {
+    if (this.native) return
+    this.$nextTick(this.update)
+    // !this.noresize &&
+  }
+  private beforeDestroy(): void {
+    if (this.native) return
   }
 }
