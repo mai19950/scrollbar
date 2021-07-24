@@ -3,9 +3,11 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import scrollbarWidth from './scrollbar-width'
 import { toObject } from './utils'
 
-// interface StyleObj {
-// [key: string]: any
-// }
+interface StyleObj {
+  [key: string]: any
+}
+
+type StyleType = string | StyleObj | StyleObj[]
 
 @Component({
   name: 'Scrollbar',
@@ -14,22 +16,22 @@ export default class Scrollbar extends Vue {
   @Prop({}) private native!: boolean
   @Prop({ default: 'div' }) private tag!: string
   @Prop({}) private noresize!: boolean
-  @Prop({ default: {} }) private wrapStyle!: any
+  @Prop({ default: {} }) private wrapStyle!: StyleType
+  @Prop({ default: {} }) private viewStyle!: StyleType
   @Prop({ default: {} }) private wrapClass!: any
   @Prop({ default: {} }) private viewClass!: any
-  @Prop({ default: {} }) private viewStyle!: any
 
   private sizeWidth: number | string = '0'
   private sizeHeight: number | string = '0'
   private moveX = 0
   private moveY = 0
 
-  get wrap() {
-    return this.$refs.wrap
+  get wrap(): Element {
+    return this.$refs.wrap as Element
   }
 
   private handleScroll() {
-    const wrap = this.wrap as Element
+    const wrap = this.wrap
 
     this.moveX = (wrap.scrollLeft * 100) / wrap.clientWidth
     this.moveY = (wrap.scrollTop * 100) / wrap.clientHeight

@@ -21,7 +21,24 @@ export const toObject = (arr: any[]) => {
   return res
 }
 
-export const BAR_MAP = {
+type Direction = 'vertical' | 'horizontal'
+
+export interface IDirection {
+  offset: string
+  scroll: string
+  scrollSize: string
+  size: string
+  key: string
+  axis: string
+  client: string
+  direction: string
+}
+
+export type BarMap = {
+  [key in Direction]: IDirection
+}
+
+export const BAR_MAP: BarMap = {
   vertical: {
     offset: 'offsetHeight',
     scroll: 'scrollTop',
@@ -47,7 +64,7 @@ export const BAR_MAP = {
 export interface IBarStyleProp {
   move: number
   size: string
-  bar: any
+  bar: IDirection
 }
 
 export interface IBarStyle {
